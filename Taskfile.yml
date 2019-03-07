@@ -1,0 +1,19 @@
+version: "2"
+
+tasks:
+  featurize:
+    desc: Create features from dataset.csv
+    cmds:
+      - dvc run -d dataset.csv -d featurize.py -o features.csv -o target.csv python3 featurize.py
+  split:
+    desc: Create un train/test dataset
+    cmds:
+      - dvc run -d features.csv -d split.py -d target.csv -o train -o test python3 split.py
+  train:
+    desc: Train a linear model with the train dataset
+    cmds:
+      - dvc run -d train -d build.py -o model.pickle python3 build.py
+  evaluate:
+    desc: Apply model on test dataset and calculate R2 score
+    cmds:
+      - dvc run -d test -d evaluate.py -d model.pickle -M metric.txt python3 evaluate.py
